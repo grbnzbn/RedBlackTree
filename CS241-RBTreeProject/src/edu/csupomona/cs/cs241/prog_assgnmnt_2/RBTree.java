@@ -4,7 +4,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Stack;
 
-public class ParamRBTree<K extends Comparable <K>, V> implements Tree<K, V> {
+public class RBTree<K extends Comparable <K>, V> implements Tree<K, V> {
 
 	private Queue<Node> theQueue;
 	private Stack<Node> theStack;
@@ -39,7 +39,7 @@ public class ParamRBTree<K extends Comparable <K>, V> implements Tree<K, V> {
 		protected Node parent;
 		protected Node left;
 		protected Node right;
-		protected ParamRBTree.COLOR color;
+		protected RBTree.COLOR color;
 		
 		public Node(K key, V value) {
 			this.key = key;
