@@ -1,16 +1,16 @@
 package edu.csupomona.cs.cs241.prog_assgnmnt_2;
 
-public interface RedBlackTree<V extends Comparable<V>> {
+public interface Tree<K extends Comparable<K>, V> {
 	
 	public static enum COLOR {RED, BLACK};
 	
-	public void add();
+	public void add(K key, V value);
 	
-	public void remove();
+	public V remove(K key);
 	
-	public void search();
+	public V lookup(K key);
 	
-	public void display();
+	public String display(); // toPrettyString
 	
 	/*
 	 * You are to implement a Red-Black Tree. To simplify the project, the values 
