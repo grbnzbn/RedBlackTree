@@ -2,7 +2,7 @@ package edu.csupomona.cs.cs241.prog_assgnmnt_2;
 
 public interface Tree<K extends Comparable<K>, V> {
 	
-	public static enum COLOR {RED, BLACK};
+	public static enum COLOR {RED, BLK};
 	
 	public void add(K key, V value);
 	
