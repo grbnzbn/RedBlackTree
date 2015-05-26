@@ -11,6 +11,8 @@ public interface Tree<K extends Comparable<K>, V> {
 	public V lookup(K key);
 	
 	public String display(); // toPrettyString
+	// this should return a string with the values in the tree in a pyramid fashion each value appearing along with its color so
+	// as t make it easy to visualize the structure of the tree
 	
 	/*
 	 * You are to implement a Red-Black Tree. To simplify the project, the values 

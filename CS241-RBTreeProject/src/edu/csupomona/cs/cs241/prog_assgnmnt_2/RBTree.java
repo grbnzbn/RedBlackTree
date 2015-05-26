@@ -10,15 +10,10 @@ public class RBTree<K extends Comparable <K>, V> implements Tree<K, V> {
 	private Stack<Node> theStack;
 	
 	public Node root; 			// X
-	public Node sentinel; 		// Y
+	public Node sentinel = new Node(); 		// Y
 	
 	public void add(K key, V value) {
 		
-		if (root == null) {
-			
-		} else {
-			
-		}
 	}
 
 	public V remove(K key) {
@@ -43,7 +38,29 @@ public class RBTree<K extends Comparable <K>, V> implements Tree<K, V> {
 		
 	}
 	
-	public void leftRotate() {
+	public void leftRotate(Node node) {
+		// node serves as the root of the subtree we perform the rotation on
+		// MUST ASSUME THAT NODE.RIGHT != NULL
+		
+		Node pivot = node.right;
+		node.right = pivot.left;
+		
+		if (pivot.left != sentinel) {
+			pivot.left.parent = node;
+		}
+		
+		pivot.parent = node.parent;
+		
+		if (node.parent == sentinel) {
+			root = pivot;
+		} else if (node == node.parent.left) {
+			node.parent.left = pivot;
+		} else {
+			node.parent.right = pivot;
+		}
+		
+		pivot.left = node;
+		node.parent = pivot;
 		
 	}
 	
@@ -51,10 +68,22 @@ public class RBTree<K extends Comparable <K>, V> implements Tree<K, V> {
 		
 	}
 	
+	public void singleRotate() {
+		
+	}
+	
+	public void doubleRotate() {
+		
+	}
+	
 	// Returns 0 if it is an invalid RBTree else it returns the height of the entire tree
+	/* Test 1: See if a red node has red children.
+	 * Test 2: Ensures the tree is a valid binary search tree
+	 * Test 3: Counts the black nodes along a path and ensures equal length
+	 */
 	public int assertRBT(Node node) { // node will typically refer to the current node we are on
 		
-		int lh, rh; // (???)
+		int lh, rh; // left height & right height
 		
 		if (node == null) {
 			return 1;
@@ -73,12 +102,9 @@ public class RBTree<K extends Comparable <K>, V> implements Tree<K, V> {
 			lh = assertRBT(ln);
 			rh = assertRBT(rn);
 			
-//			if ((ln != null && ln.key >= node.key) || (rn != null && rn.key <= node.key)) {
-//				
-//			}
-			
 			// Invalid binary search tree
 			if ((ln != null && ln.key.compareTo(node.key) >= 0) || (rn != null && rn.key.compareTo(node.key) <= 0)) {
+//			if ((ln != null && ln.key >= node.key) || (rn != null && rn.key <= node.key)) {				
 				System.out.println("Binary Tree Violation");
 				return 0;
 			}
@@ -140,7 +166,7 @@ public class RBTree<K extends Comparable <K>, V> implements Tree<K, V> {
 			this.parent = null;
 			this.left = null;
 			this.right = null;
-			this.color = 0;
+			this.color = 0; // 0 = BLACK
 			//this.color = RBTree.COLOR.BLK;
 		}
 		
@@ -148,8 +174,7 @@ public class RBTree<K extends Comparable <K>, V> implements Tree<K, V> {
 			this.key = key;
 			this.value = value;
 		}
-		
-		@Override
+
 		public int compareTo(Node n) {
 			return this.key.compareTo(n.key);
 		}
