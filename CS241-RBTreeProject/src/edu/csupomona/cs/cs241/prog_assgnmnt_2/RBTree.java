@@ -1,15 +1,8 @@
 package edu.csupomona.cs.cs241.prog_assgnmnt_2;
 
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Stack;
-
 public class RBTree<K extends Comparable <K>, V> implements Tree<K, V> {
 
-	private Queue<Node> theQueue;
-	private Stack<Node> theStack;
-	
-	public Node root; 			// X
+	public Node root; 						// X
 	public Node sentinel = new Node(); 		// Y
 	
 	public void add(K key, V value) {
@@ -29,7 +22,20 @@ public class RBTree<K extends Comparable <K>, V> implements Tree<K, V> {
 		return null;
 	}
 	
-//##################################################	
+//#################################################
+	public Node addBST(K key, V value) { // FIXME This is just an example of a classic BST insert
+		
+		if (root == null) {
+			root = new Node(key, value);
+		} else if (key.compareTo(root.key) < 0) {
+			root.left = new Node(key, value);
+		} else {
+			root.right = new Node(key,value);
+		}
+		
+		return root;
+	}
+	
 	public void fixAdd() {
 		
 	}
@@ -61,15 +67,35 @@ public class RBTree<K extends Comparable <K>, V> implements Tree<K, V> {
 		
 		pivot.left = node;
 		node.parent = pivot;
-		
 	}
 	
-	public void rightRotate() {
+	public void rightRotate(Node node) {
+		Node pivot = node.left;
+		node.left = pivot.right;
 		
+		if (pivot.right != sentinel) {
+			pivot.right.parent = node;
+		}
+		
+		pivot.parent  = node.parent;
+		
+		if (node.parent == sentinel) {
+			root = pivot;
+		} else if (node == node.parent.right) {
+			node.parent.right = pivot;
+		} else {
+			node.parent.left = pivot;
+		}
+		
+		pivot.right = node;
+		node.parent = pivot;
 	}
 	
-	public void singleRotate() {
-		
+	public void singleRotate(Node node) { // TODO
+		/*
+		 * if (node.right != null) then leftRotate
+		 * if (node.left != null) then rightRotate
+		 */
 	}
 	
 	public void doubleRotate() {
