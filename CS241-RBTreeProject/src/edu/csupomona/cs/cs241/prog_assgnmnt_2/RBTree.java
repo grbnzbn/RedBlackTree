@@ -1,7 +1,5 @@
 package edu.csupomona.cs.cs241.prog_assgnmnt_2;
 
-import java.util.LinkedList;
-
 public class RBTree<K extends Comparable <K>, V> implements Tree<K, V> {
 
 	public Node root; 						// X
@@ -25,6 +23,25 @@ public class RBTree<K extends Comparable <K>, V> implements Tree<K, V> {
 	}
 	
 //#################################################	
+	
+	public void print(Node node) { // node == root[T]
+		// uses in-order traversal
+		Node temp = node;
+		if (temp != null) { // FIXME make this compatible with sentinels. replace null with sentinal in case you forget.
+			print(temp.left);
+			System.out.println("[" + node.key + "-" + node.getColor(node.color) + "]");
+			print(temp.right);
+		} else {
+			System.out.println("NULL");
+			// display parent
+			// if it is left or right child relative to parent
+		}
+	}
+	
+	public Node getRoot() {
+		return root;
+	}
+	
 	public Node insert(Node node, K key, V value) { // node may actually be root? possibly subtree's root?
 		
 		if (root == null) {
@@ -33,14 +50,13 @@ public class RBTree<K extends Comparable <K>, V> implements Tree<K, V> {
 			
 			if (key.compareTo(node.key) < 0) {
 				node.left = new Node(key, value);
+				node.left.dir = false;
 			} else {
 				node.right = new Node(key, value);
+				node.right.dir = true;
 			}
 			
 			/* REBALANCE OCCURS HERE */ // TODO
-			if (isRed(node)) {
-				
-			}
 			
 		}
 		
@@ -51,8 +67,62 @@ public class RBTree<K extends Comparable <K>, V> implements Tree<K, V> {
 		root = insert(root, key, value); // CONFUSION STARTS HERE
 		root.color = 0;
 	}
+	
+	public void insertRB(K key, V value) { // Insert according to book		
+		
+		if (root == null) {
+			root = new Node(key, value);
+		} else {
+			
+			Node pn = sentinel; // previous node
+			Node nn = root; // next node
+			Node node = new Node(key, value);
+			
+			while (nn != sentinel) {
+				pn = nn;
+				if (node.key.compareTo(nn.key) < 0) {
+					nn = nn.left;
+				} else {
+					nn = nn.right;
+				}				
+			}
+			
+			node.parent = pn;
+			
+			// check the following operations
+			if (pn == sentinel) {
+				root = node;
+			} else if (node.key.compareTo(pn.key) < 0) {
+				pn.left = node;
+			} else {
+				pn.right = node;
+			}
+			
+			node.left = sentinel;
+			node.right = sentinel;
+			node.color = 1;
+			/* RB INSERT FIXUP OCCURS HERE */ // TODO
+		}
+	}
+	
 //#################################################	
-	public void fixAdd() {
+	public void fixAdd(Node node) {
+		
+		if (isRed(node.left)) { // LEFT SYMMETRIC CASE
+			if (isRed(node.right)) { 				
+				node.color = 1; // paint it red
+				node.left.color = 0;
+				node.right.color = 0;
+			} else {
+				if (isRed(node.left.left)) {
+					node = rightRotate(node);
+				} else if (isRed(node.left.right)) {
+					
+				}
+			}
+		} else { // RIGHT SYMMETRIC CASE 
+			
+		}
 		
 	}
 	
@@ -60,12 +130,15 @@ public class RBTree<K extends Comparable <K>, V> implements Tree<K, V> {
 		
 	}
 	
-	public void leftRotate(Node node) {
+	public Node leftRotate(Node node) {
 		// node serves as the root of the subtree we perform the rotation on
 		// MUST ASSUME THAT NODE.RIGHT != NULL
 		
 		Node pivot = node.right;
 		node.right = pivot.left;
+		
+//		node.color = 1; // FIXME 
+//		pivot.color = 0; // FIXME
 		
 		if (pivot.left != sentinel) {
 			pivot.left.parent = node;
@@ -83,9 +156,11 @@ public class RBTree<K extends Comparable <K>, V> implements Tree<K, V> {
 		
 		pivot.left = node;
 		node.parent = pivot;
+		
+		return pivot;
 	}
 	
-	public void rightRotate(Node node) {
+	public Node rightRotate(Node node) {
 		Node pivot = node.left;
 		node.left = pivot.right;
 		
@@ -105,6 +180,8 @@ public class RBTree<K extends Comparable <K>, V> implements Tree<K, V> {
 		
 		pivot.right = node;
 		node.parent = pivot;
+		
+		return pivot;
 	}
 	
 	public void singleRotate(Node node) { // TODO
@@ -199,10 +276,11 @@ public class RBTree<K extends Comparable <K>, V> implements Tree<K, V> {
 		protected Node parent;
 		protected Node left;
 		protected Node right;
+		protected boolean dir; // DIRECTION: false = left && true = right (relative to the parent)
 		protected int color; // BLACK = 0 && RED = 1
 		//protected RBTree.COLOR color; // RED or BLK
 		
-		public Node() {
+		public Node() { // usually reserved for sentinel
 			this.key = null;
 			this.value = null;
 			this.parent = null;
@@ -227,6 +305,19 @@ public class RBTree<K extends Comparable <K>, V> implements Tree<K, V> {
 
 		public int compareTo(Node n) {
 			return this.key.compareTo(n.key);
+		}
+		
+		public String getColor(int color) {
+			
+			String msg = null;
+			
+			if (color == 0) {
+				msg = "BLK";
+			} else {
+				msg = "RED";
+			}
+			
+			return msg;
 		}
 	}
 
