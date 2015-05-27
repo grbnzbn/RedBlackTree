@@ -1,13 +1,15 @@
 package edu.csupomona.cs.cs241.prog_assgnmnt_2;
 
+import java.util.LinkedList;
+
 public class RBTree<K extends Comparable <K>, V> implements Tree<K, V> {
 
 	public Node root; 						// X
 	public Node sentinel = new Node(); 		// Y
 	
-	public void add(K key, V value) {
-		
-	}
+//	public void add(K key, V value) {
+//		TODO replace when finished below
+//	}
 
 	public V remove(K key) {
 		return null;
@@ -18,24 +20,38 @@ public class RBTree<K extends Comparable <K>, V> implements Tree<K, V> {
 		return null;
 	}
 
-	public String display() {
+	public String display() { // toPrettyString();
 		return null;
 	}
 	
-//#################################################
-	public Node addBST(K key, V value) { // FIXME This is just an example of a classic BST insert
+//#################################################	
+	public Node insert(Node node, K key, V value) { // node may actually be root? possibly subtree's root?
 		
 		if (root == null) {
 			root = new Node(key, value);
-		} else if (key.compareTo(root.key) < 0) {
-			root.left = new Node(key, value);
-		} else {
-			root.right = new Node(key,value);
+		} else if (key != root.key) { // If key is not a duplicate
+			
+			if (key.compareTo(node.key) < 0) {
+				node.left = new Node(key, value);
+			} else {
+				node.right = new Node(key, value);
+			}
+			
+			/* REBALANCE OCCURS HERE */ // TODO
+			if (isRed(node)) {
+				
+			}
+			
 		}
 		
-		return root;
+		return node; // (???) FIXME do we really need to return this for recursion?
 	}
 	
+	public void add(K key, V value) {
+		root = insert(root, key, value); // CONFUSION STARTS HERE
+		root.color = 0;
+	}
+//#################################################	
 	public void fixAdd() {
 		
 	}
@@ -196,15 +212,22 @@ public class RBTree<K extends Comparable <K>, V> implements Tree<K, V> {
 			//this.color = RBTree.COLOR.BLK;
 		}
 		
+//		public Node(K key, V value) {
+//			this.key = key;
+//			this.value = value;
+//		}
+		
 		public Node(K key, V value) {
 			this.key = key;
 			this.value = value;
+			this.color = 1; // set as red node
+			this.left = null;
+			this.right = null;
 		}
 
 		public int compareTo(Node n) {
 			return this.key.compareTo(n.key);
 		}
-		
 	}
 
 }
