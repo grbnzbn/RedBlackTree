@@ -1,12 +1,10 @@
 package edu.csupomona.cs.cs241.prog_assgnmnt_2;
 
-import java.util.LinkedList;
-
 /*
  * This class serves as a purpose to pursue any possible differing approaches
  * to the implementation of a red black tree
  */
-public class ParamRBT<K extends Comparable<K>, V> implements Tree<K, V>{
+public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 
 	
 	public void add(K key, V value) {
@@ -20,7 +18,7 @@ public class ParamRBT<K extends Comparable<K>, V> implements Tree<K, V>{
 		return null;
 	}
 
-	public String display() {
+	public String display() { // toPrettyPrint();
 		return null;
 	}
 
@@ -28,8 +26,6 @@ public class ParamRBT<K extends Comparable<K>, V> implements Tree<K, V>{
 
 	
 	public class Node implements Comparable<Node> {
-
-		protected LinkedList<Node> dir = new LinkedList<Node>();
 		
 		protected K key;
 		protected V value;
@@ -50,12 +46,12 @@ public class ParamRBT<K extends Comparable<K>, V> implements Tree<K, V>{
 		public Node(K key, V value) {
 			this.key = key;
 			this.value = value;
+			this.color = 1;
 		}
 		
 		public int compareTo(Node n) {
 			return this.key.compareTo(n.key);
 		}
-		
 	}
 	
 }
