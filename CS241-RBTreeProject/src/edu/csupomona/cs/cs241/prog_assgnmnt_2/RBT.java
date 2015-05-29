@@ -6,6 +6,7 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 	private Node sentinel = new Node();
 	
 	public void add(K key, V value) {
+		
 	}
 
 	public V remove(K key) {
@@ -33,13 +34,9 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 		return null;
 	}
 	
-	public Node getRoot() {
-		return root;
-	}
-	
 //##################################################
 	
-	public void insert(K key, V value) { // Insert according to book		
+	public void insert(K key, V value) {	
 		
 		if (root == null) {
 			root = new Node(key, value);
@@ -117,7 +114,7 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 	public V delete(K key) { // TODO
 		V value = null;
 		
-		Node z = root.find(key);
+		Node z = root.locate(key);
 		Node y = new Node();
 		Node x = new Node();
 		
@@ -212,7 +209,9 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 	}
 	
 	public void print(Node node) { // node == root[T]
-		// uses in-order traversal
+		// I'd like to call this uglyPrint()
+		// must use in-order traversal to to traverse values
+		// from left to right
 		Node temp = node;
 		if (temp != null) { // FIXME make this compatible with sentinels. replace null with sentinal in case you forget.
 			print(temp.left);
@@ -336,6 +335,26 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 		return (node.color == 1);
 	}
 		
+	public int height(Node node) {
+		// height of given node needed for prettyPrint()
+		// depth is num of lines from root to node
+		// height is the max depth of any node in the tree
+		if (node == null) {
+			return -1;
+		} else {
+			return (1 + Math.max(height(node.left), height (node.right)));
+		}
+	}
+	
+	public int size(Node root) {
+		// tree size needed for prettyPrint()
+		return 0;
+	}
+	
+	public int numLeaves(Node root) {
+		// number of leaves needed for prettyPrint()
+		return 0;
+	}
 	
 //##################################################	
 
@@ -366,27 +385,9 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 		
 		public int compareTo(Node n) {
 			return this.key.compareTo(n.key);
-		}
+		}	
 		
-		public V search(K key) {
-			V found = null;
-			
-			if (key != this.key) {
-				if (key.compareTo(this.key) < 0) {
-					if (this.left != null) {
-						return left.search(key);
-					}
-				} else {
-					return right.search(key);
-				}
-			} else {
-				found = this.value;
-			}
-			
-			return found;
-		}		
-		
-		public Node find(K key) {
+		public Node locate(K key) {
 			Node temp = this;
 			
 			while (temp != null && key != this.key) {

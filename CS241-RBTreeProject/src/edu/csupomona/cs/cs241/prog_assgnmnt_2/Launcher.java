@@ -15,7 +15,7 @@ public class Launcher {
 		 ((RBT<Integer, String>) registry.rbt).insert(1, "Daniel");
 		 ((RBT<Integer, String>) registry.rbt).insert(3, "Kevin");
 		 ((RBT<Integer, String>) registry.rbt).insert(2, "Eric");
-		 ((RBT<Integer, String>) registry.rbt).print(((RBT<Integer, String>) registry.rbt).getRoot());
+//		 ((RBT<Integer, String>) registry.rbt).print(((RBT<Integer, String>) registry.rbt).getRoot());
 	}
 	
 	public void addEntry() {

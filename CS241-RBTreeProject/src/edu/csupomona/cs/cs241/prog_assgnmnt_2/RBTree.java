@@ -1,5 +1,8 @@
 package edu.csupomona.cs.cs241.prog_assgnmnt_2;
 
+/*
+ * This is a test/draft class for various ways of implementation/brainstorming
+ */
 public class RBTree<K extends Comparable <K>, V> implements Tree<K, V> {
 
 	public Node root; 						// X
