@@ -1,3 +1,21 @@
+/**
+ * CS 241: Data Structures and Algorithms II
+ * Professor: Edwin Rodr&iacute;guez
+ *
+ * Programming Assignment #2
+ *
+ * <description-of-assignment>
+ * An individual assignment. A very SIMPLE programming project in
+ * which I SIMPLY implement a Red-Black Tree, and include pretty printing
+ * which returns a string with the values in the tree, in a pyramid
+ * fashion, each value appearing along with its color to aid in 
+ * this data structure's visualization
+ *
+ * Team #N / (or name if individual)
+ *   <team-member-names-if-team-assignment>
+ *   Daniel Gamboa
+ */
+
 package edu.csupomona.cs.cs241.prog_assgnmnt_2;
 
 public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
@@ -228,15 +246,15 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 		return null;
 	}
 	
-	public void uglyPrint(Node node) { // node == root[T]
+	public void uglyDisplay(Node node) { // node == root[T]
 		// I'd like to call this uglyPrint()
 		// must use in-order traversal to to traverse values
 		// from left to right
 		Node temp = node;
 		if (temp != null) { // FIXME make this compatible with sentinels. replace null with sentinal in case you forget.
-			uglyPrint(temp.left);
+			uglyDisplay(temp.left);
 			System.out.println("[" + node.key + "-" + node.printColor(node.color) + "]");
-			uglyPrint(temp.right);
+			uglyDisplay(temp.right);
 		} else {
 			System.out.println("NULL");
 			// display parent

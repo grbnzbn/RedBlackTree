@@ -1,8 +1,24 @@
+/**
+ * CS 241: Data Structures and Algorithms II
+ * Professor: Edwin Rodr&iacute;guez
+ *
+ * Programming Assignment #2
+ *
+ * <description-of-assignment>
+ * An individual assignment. A very SIMPLE programming project in
+ * which I SIMPLY implement a Red-Black Tree, and include pretty printing
+ * which returns a string with the values in the tree, in a pyramid
+ * fashion, each value appearing along with its color to aid in 
+ * this data structure's visualization
+ *
+ * Team #N / (or name if individual)
+ *   <team-member-names-if-team-assignment>
+ *   Daniel Gamboa
+ */
+
 package edu.csupomona.cs.cs241.prog_assgnmnt_2;
 
 public interface Tree<K extends Comparable<K>, V> {
-	
-	public static enum COLOR {RED, BLK};
 	
 	public void add(K key, V value);
 	
@@ -10,17 +26,5 @@ public interface Tree<K extends Comparable<K>, V> {
 	
 	public V lookup(K key);
 	
-	public String display(); // toPrettyString
-	// this should return a string with the values in the tree in a pyramid fashion each value appearing along with its color so
-	// as t make it easy to visualize the structure of the tree
-	
-	/*
-	 * You are to implement a Red-Black Tree. To simplify the project, the values 
-	 * stored in the nodes will be just integers (so you don't have to worry about 
-	 * comparable types and such, or differentiating between keys and values). 
-	 * The interface for the RBT should provide the expected operations for adding, 
-	 * removing, and looking up values. In addition to that, it will support a void method 
-	 * prettyPrint() that will print to the console the values in the tree, in a pyramid fashion, 
-	 * each value printed along with its color, so as to make it easy to visualize the structure of the tree. 
-	 */
+	public String display();
 }
