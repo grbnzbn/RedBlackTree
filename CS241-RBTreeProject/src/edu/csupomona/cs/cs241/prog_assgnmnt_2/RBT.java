@@ -3,34 +3,29 @@ package edu.csupomona.cs.cs241.prog_assgnmnt_2;
 public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 
 	private Node root;
-	private Node sentinel = new Node();
+	private Node nil = new Node();
 	
 	public void add(K key, V value) {
-		
+		// see insert():
 	}
 
 	public V remove(K key) {
+		// see delete();
 		return null;
 	}
 	
 	public V lookup(K key) {
-		Node n = root;
+		Node n = fetch(key);
 		
-		while (n != null) {
-			
-			if (key.compareTo(n.key) == 0) {
-				return n.value;
-			} else if (key.compareTo(n.key) < 0) {
-				n = n.left;
-			} else {
-				n = n.right;
-			}
-			
+		if (n != null) {
+			return n.value;
 		}
+		
 		return null;
 	}
 
-	public String display() { // toPrettyPrint();
+	public String display() {
+		// TODO implement toPrettyPrint();
 		return null;
 	}
 	
@@ -40,14 +35,13 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 		
 		if (root == null) {
 			root = new Node(key, value);
-			root.p = sentinel;
 		} else {
 			
-			Node pn = sentinel; // previous node
-			Node cn = root; // current node
 			Node nn = new Node(key, value); // new node 
+			Node pn = nil; // previous node
+			Node cn = root; // current node
 			
-			while (cn != null) { // FIXME change from sentinel to null
+			while (cn != nil) { // FIXME (???)
 				pn = cn;
 				if (nn.key.compareTo(cn.key) < 0) {
 					cn = cn.left;
@@ -59,7 +53,7 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 			nn.p = pn;
 			
 			// takes care of parent of the new node's pointers
-			if (pn == sentinel) {
+			if (pn == nil) {
 				root = nn;
 			} else if (nn.key.compareTo(pn.key) < 0) {
 				pn.left = nn;
@@ -67,10 +61,10 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 				pn.right = nn;
 			}
 			
-			nn.left = sentinel;
-			nn.right = sentinel;
+			nn.left = nil;
+			nn.right = nil;
 			nn.color = 1;
-			/* RB INSERT FIXUP OCCURS HERE */
+
 			fixAdd(nn);
 		}
 	}
@@ -78,26 +72,30 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 	public void fixAdd(Node node) {
 		
 		while (node.p.color == 1) { // while the parent of our nn is red (which is also red)
-			if (node.p == node.p.p.left) { // if the nn's parent is the same as the uncle 
-				Node pn = node.p.p.right;
-				if (pn.color == 1) {
+			if (node.p == node.p.p.left) { // if dad is the left child
+				
+				Node uncle = node.p.p.right;
+				
+				if (uncle.color == 1) { // handle double red case
 					node.p.color = 0;
-					pn.color = 0;
-					node.p.p.color = 0;
+					uncle.color = 0;
+					node.p.p.color = 1;
 					node = node.p.p;
-				} else if (node == node.p.right) {
+				} else if (node == node.p.right) { // if nn is the right child
 					node = node.p;
-					leftRotate(node);
+					leftRotate(node); // left rotate new node
 					node.p.color = 0;
 					node.p.p.color = 1;
-					rightRotate(node.p.p);
+					rightRotate(node.p.p); // right rotate grandpa
 				}
-			} else { // symmetric case
-				Node pn = node.p.p.left;
-				if (pn.color == 1) {
+			} else { // symmetric case (if dad is right child)
+				
+				Node uncle = node.p.p.left;
+				
+				if (uncle.color == 1) {
 					node.p.color = 0;
-					pn.color = 0;
-					node.p.p.color = 0;
+					uncle.color = 0;
+					node.p.p.color = 1;
 					node = node.p.p;
 				} else if (node == node.p.left) {
 					node = node.p;
@@ -108,98 +106,103 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 				}
 			}
 		} // end while loop
-		root.color = 0;
+		root.color = 0; // just in case the root becomes red in the process
 	}
 	
 	public V delete(K key) { // TODO
-		V value = null;
 		
-		Node z = root.locate(key);
-		Node y = new Node();
-		Node x = new Node();
+		Node result = fetch(key); // node to be removed
 		
-		if (z.left == sentinel || z.right == sentinel) {
-			y = z;
+		Node ngv = new Node(); // successor or next greatest value
+		Node temp = new Node(); // FIXME temp
+		
+		if (result.left == nil || result.right == nil) {
+			ngv = result;
 		} else {
-			y = successor(z);
+			ngv = successor(result);
 		}
 		
-		if (y.left != sentinel) {
-			x = y.left;
+		if (ngv.left != nil) {
+			temp = ngv.left;
 		} else {
-			x = y.right;
+			temp = ngv.right;
 		}
 		
-		x.p = y.p;
+		temp.p = ngv.p; // splicing
 		
-		if (y.p == sentinel) {
-			root = x;
-		} else if (y == y.p.left) {
-			y.p.left = x;
+		if (ngv.p == nil) {
+			root = temp;
+		} else if (ngv == ngv.p.left) {
+			ngv.p.left = temp;
 		} else {
-			y.p.right = x;
+			ngv.p.right = temp;
 		}
 		
-		if (y != z) {
-			z.key = y.key;
+		if (ngv != result) {
+			result.key = ngv.key;
+			// TODO obtain satellite data from ngv into result
 		}
 		
-		return value;
+		if (ngv.color == 0) {
+			fixRem(temp);
+		}
+		
+		return result.value;
 	}
 	
-	public void fixRem(Node node) {
+	public void fixRem(Node node) { // TODO bugcheck implementation
 		
-		Node w;
+		Node sibling;
 		
 		while (node != root && node.color == 0) {
-			if (node == node.p.left) {
-				w = node.p.right;
+			if (node == node.p.left) { // if rmvd node is left child
+				sibling = node.p.right;
 				
-				if (w.color == 1) {
-					w.color = 0;
+				if (sibling.color == 1) {
+					sibling.color = 0;
 					node.p.color = 1;
 					leftRotate(node.p);
-					w = node.p.right;
+					sibling = node.p.right;
 				}
 				
-				if (w.left.color == 0 && w.right.color == 0) {
-					w.color = 1;
+				if (sibling.left.color == 0 && sibling.right.color == 0) {
+					sibling.color = 1;
 					node = node.p;
-				} else if (w.right.color == 0) {
-					w.left.color = 0;
-					w.color = 1;
-					rightRotate(w);
-					w = node.p.right;
+				} else if (sibling.right.color == 0) {
+					sibling.left.color = 0;
+					sibling.color = 1;
+					rightRotate(sibling);
+					sibling = node.p.right;
 				}
 				
-				w.color = node.p.color;
+				sibling.color = node.p.color; //TODO
 				node.p.color = 0;
-				w.right.color = 0;
+				sibling.right.color = 0;
 				leftRotate(node.p);
 				node = root;
 			} else { // symmetric case 
-				w = node.p.left;
+				sibling = node.p.left;
 				
-				if (w.color == 1) {
-					w.color = 0;
+				if (sibling.color == 1) {
+					sibling.color = 0;
 					node.p.color = 1;
 					rightRotate(node.p);
-					w = node.p.left;
+					sibling = node.p.left;
 				}
 				
-				if (w.right.color == 0 && w.left.color == 0) {
-					w.color = 1;
+				if (sibling.right.color == 0 && sibling.left.color == 0) {
+					sibling.color = 1;
 					node = node.p;
-				} else if (w.left.color == 0) {
-					w.right.color = 0;
-					w.color = 1;
-					leftRotate(w);
-					w = node.p.left;
+				} else if (sibling.left.color == 0) {
+					sibling.right.color = 0;
+					sibling.color = 1;
+					leftRotate(sibling);
+					sibling = node.p.left;
 				}
 				
-				w.color = node.p.color;
+				sibling.color = node.p.color;
 				node.p.color = 0;
-				w.left.color = 0;
+				sibling.left.color = 0;
 				rightRotate(node.p);
 				node = root;
 			}	
@@ -208,15 +211,32 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 		node.color = 0;
 	}
 	
-	public void print(Node node) { // node == root[T]
+	public Node fetch(K key) {
+		Node n = root;
+		
+		while (n != null) {
+			
+			if (key.compareTo(n.key) == 0) {
+				return n;
+			} else if (key.compareTo(n.key) < 0) {
+				n = n.left;
+			} else {
+				n = n.right;
+			}
+			
+		}
+		return null;
+	}
+	
+	public void uglyPrint(Node node) { // node == root[T]
 		// I'd like to call this uglyPrint()
 		// must use in-order traversal to to traverse values
 		// from left to right
 		Node temp = node;
 		if (temp != null) { // FIXME make this compatible with sentinels. replace null with sentinal in case you forget.
-			print(temp.left);
+			uglyPrint(temp.left);
 			System.out.println("[" + node.key + "-" + node.printColor(node.color) + "]");
-			print(temp.right);
+			uglyPrint(temp.right);
 		} else {
 			System.out.println("NULL");
 			// display parent
@@ -236,15 +256,15 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 		Node pivot = node.right;
 		node.right = pivot.left;
 		
-		if (pivot.left != sentinel) {
+		if (pivot.left != nil) {
 			pivot.left.p = node;
 		}
 		
 		pivot.p = node.p;
 		
-		if (node.p == sentinel) {
+		if (node.p == nil) { // was the node the root?
 			root = pivot;
-		} else if (node == node.p.left) {
+		} else if (node == node.p.left) { // was the node a left or right child?
 			node.p.left = pivot;
 		} else {
 			node.p.right = pivot;
@@ -259,13 +279,13 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 		Node pivot = node.left;
 		node.left = pivot.right;
 		
-		if (pivot.right != sentinel) {
+		if (pivot.right != nil) {
 			pivot.right.p = node;
 		}
 		
 		pivot.p  = node.p;
 		
-		if (node.p == sentinel) {
+		if (node.p == nil) {
 			root = pivot;
 		} else if (node == node.p.right) {
 			node.p.right = pivot;
@@ -332,7 +352,7 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 		if (node == null) {
 			return false;
 		}
-		return (node.color == 1);
+		return (node.color == 1); // true
 	}
 		
 	public int height(Node node) {
@@ -355,6 +375,51 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 		// number of leaves needed for prettyPrint()
 		return 0;
 	}
+	
+	// Returns 0 if it is an invalid RBTree else it returns the height of the entire tree
+	/* Test 1: See if a red node has red children.
+	 * Test 2: Ensures the tree is a valid binary search tree
+	 * Test 3: Counts the black nodes along a path and ensures equal length
+	 */
+	public int verify(Node node) { // node will typically refer to the current node we are on
+		
+		int lh, rh; // left height & right height
+		
+		if (node == null) {
+			return 1;
+		} else {
+			Node ln = node.left;
+			Node rn = node.right;
+
+			if (isRed(node)) { // Consecutive red nodes
+				if (isRed(ln) || isRed(rn)) {
+					System.out.println("Red Violation (#4: Children of a red node are black)");
+					return 0;
+				}
+			}
+			
+			lh = verify(ln);
+			rh = verify(rn);
+			
+			if ((ln != null && ln.key.compareTo(node.key) > 0) || (rn != null && rn.key.compareTo(node.key) < 0)) {	// Invalid binary search tree
+				System.out.println("Binary Tree Violation");
+				return 0;
+			}
+			
+			if (lh != 0 && rh != 0 && lh != rh) { // Black height mismatch
+				System.out.println("Black Violation (#5: Any path from root to leaf contains the same number of black nodes.");
+				return 0;
+			}
+			
+			// Only count black links
+			if (lh != 0 && rh != 0) {
+				return isRed(node) ? lh : lh + 1;
+			} else {
+				return 0;
+			}
+		}
+	}
+	
 	
 //##################################################	
 
@@ -381,25 +446,13 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 			this.key = key;
 			this.value = value;
 			this.color = 1;
+			this.left = nil; // FIXME bug check
+			this.right = nil;
 		}
 		
 		public int compareTo(Node n) {
 			return this.key.compareTo(n.key);
 		}	
-		
-		public Node locate(K key) {
-			Node temp = this;
-			
-			while (temp != null && key != this.key) {
-				if (key.compareTo(temp.key) < 0) {
-					temp = this.left;
-				} else {
-					temp = this.right;
-				}
-			}
-			
-			return temp;
-		}
 		
 		public String printColor(int color) {
 			String msg = null;
@@ -409,7 +462,6 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 			} else {
 				msg = "RED";
 			}
-			
 			return msg;
 		}
 	} // end of Node.class

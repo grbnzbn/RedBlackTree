@@ -187,7 +187,7 @@ public class RBTree<K extends Comparable <K>, V> implements Tree<K, V> {
 		return pivot;
 	}
 	
-	public void singleRotate(Node node) { // TODO
+	public void singleRotate(Node node) {
 		/*
 		 * if (node.right != null) then leftRotate
 		 * if (node.left != null) then rightRotate
