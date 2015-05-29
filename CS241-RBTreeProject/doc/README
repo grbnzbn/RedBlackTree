@@ -1,0 +1,32 @@
+README
+
+<Assignment Description>
+An individual assignment. A very SIMPLE programming project in
+which I SIMPLY implement a Red-Black Tree, and include pretty printing
+which returns a string with the values in the tree, in a pyramid
+fashion, each value appearing along with its color to aid in 
+this data structure's visualization.
+
+<Team/Individual Information>
+Daniel Gamboa
+
+<Description of approach for your solution>
+Before anything else, since Red Black Trees originated from B-Trees
+which are both forms of BSTs, I knew the general implementations for
+insertion and deletion. I then built a skeleton of all the possible
+methods I could create. A lot of my thinking process I suppose can be
+found in the draft file named RBTree.java. lookUp was the easiest to
+implement. insertion and removal were just an updated form of their BST
+implementations. The hard part really came to the recursive fix methods
+for both of these operations. Before hand, I compiled a complete list
+of invariants, pre, and post conditions in order to help assert
+and verify the RBT. I never really got to implement the toPrettyPrint
+method but I did include some methods that would help create that.
+
+<Conclusions and lessons learned>
+This project since we have a lot of cases to manage for both insertion
+and deletion, there were many transforming states of the tree. Realizing
+that pre and post conditions as well as a good understanding of the
+invariants helped a lot in implementation. I had a lot of fun doing this
+project and plan to work on it further past the due date. It was definitely
+a huge challenge. I just wish I had more time.
