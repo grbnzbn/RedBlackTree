@@ -13,6 +13,8 @@ public class Launcher {
 		//V value = <String> Student Name
 
 		 ((RBTree<Integer, String>) registry.rbt).insertRB(1, "Daniel");
+		 ((RBTree<Integer, String>) registry.rbt).insertRB(3, "Kevin");
+		 ((RBTree<Integer, String>) registry.rbt).insertRB(2, "Eric");
 		 ((RBTree<Integer, String>) registry.rbt).print(((RBTree<Integer, String>) registry.rbt).getRoot());
 	}
 	
