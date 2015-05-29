@@ -11,16 +11,22 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 	public V remove(K key) {
 		return null;
 	}
-
+	
 	public V lookup(K key) {
-		V found = null;
+		Node n = root;
 		
-		if (root == null) {
-			System.out.println("[Empty]");
-		} else {
-			found = root.search(key);
+		while (n != null) {
+			
+			if (key.compareTo(n.key) == 0) {
+				return n.value;
+			} else if (key.compareTo(n.key) < 0) {
+				n = n.left;
+			} else {
+				n = n.right;
+			}
+			
 		}
-		return found;
+		return null;
 	}
 
 	public String display() { // toPrettyPrint();
@@ -321,6 +327,13 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 		}
 		predecessor = temp;
 		return predecessor;
+	}
+	
+	public boolean isRed(Node node) {
+		if (node == null) {
+			return false;
+		}
+		return (node.color == 1);
 	}
 		
 	
