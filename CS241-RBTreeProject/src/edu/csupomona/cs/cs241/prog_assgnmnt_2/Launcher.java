@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public class Launcher {
 
-	Tree<Integer, String> rbt = new RBTree<Integer, String>();
+	Tree<Integer, String> rbt = new RBT<Integer, String>();
 	Scanner sc = new Scanner(System.in);
 	
 	public static void main(String[] args) {
@@ -12,10 +12,10 @@ public class Launcher {
 		//K key = <Integer> Student ID
 		//V value = <String> Student Name
 
-		 ((RBTree<Integer, String>) registry.rbt).insertRB(1, "Daniel");
-		 ((RBTree<Integer, String>) registry.rbt).insertRB(3, "Kevin");
-		 ((RBTree<Integer, String>) registry.rbt).insertRB(2, "Eric");
-		 ((RBTree<Integer, String>) registry.rbt).print(((RBTree<Integer, String>) registry.rbt).getRoot());
+		 ((RBT<Integer, String>) registry.rbt).insert(1, "Daniel");
+		 ((RBT<Integer, String>) registry.rbt).insert(3, "Kevin");
+		 ((RBT<Integer, String>) registry.rbt).insert(2, "Eric");
+		 ((RBT<Integer, String>) registry.rbt).print(((RBT<Integer, String>) registry.rbt).getRoot());
 	}
 	
 	public void addEntry() {

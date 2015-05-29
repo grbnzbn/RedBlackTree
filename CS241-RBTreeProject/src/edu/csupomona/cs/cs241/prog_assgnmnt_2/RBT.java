@@ -32,26 +32,11 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 	}
 	
 //##################################################
-	public void print(Node node) { // node == root[T]
-		// uses in-order traversal
-		Node temp = node;
-		if (temp != null) { // FIXME make this compatible with sentinels. replace null with sentinel in case you forget.
-			System.out.println("[" + node.key + "-" + node.value + "-" + node.printColor(node.color) + "]" );
-			print(temp.left);
-			print(temp.right);
-			System.out.println();
-		} else {
-			System.out.println("NULL");
-			// display parent
-			// if it is left or right child relative to parent
-		}
-	}
 	
 	public void insert(K key, V value) { // Insert according to book		
 		
 		if (root == null) {
 			root = new Node(key, value);
-			root.color = 0;
 			root.p = sentinel;
 		} else {
 			
@@ -161,14 +146,88 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 	
 	public void fixRem(Node node) {
 		
+		Node w;
+		
+		while (node != root && node.color == 0) {
+			if (node == node.p.left) {
+				w = node.p.right;
+				
+				if (w.color == 1) {
+					w.color = 0;
+					node.p.color = 1;
+					leftRotate(node.p);
+					w = node.p.right;
+				}
+				
+				if (w.left.color == 0 && w.right.color == 0) {
+					w.color = 1;
+					node = node.p;
+				} else if (w.right.color == 0) {
+					w.left.color = 0;
+					w.color = 1;
+					rightRotate(w);
+					w = node.p.right;
+				}
+				
+				w.color = node.p.color;
+				node.p.color = 0;
+				w.right.color = 0;
+				leftRotate(node.p);
+				node = root;
+			} else { // symmetric case 
+				w = node.p.left;
+				
+				if (w.color == 1) {
+					w.color = 0;
+					node.p.color = 1;
+					rightRotate(node.p);
+					w = node.p.left;
+				}
+				
+				if (w.right.color == 0 && w.left.color == 0) {
+					w.color = 1;
+					node = node.p;
+				} else if (w.left.color == 0) {
+					w.right.color = 0;
+					w.color = 1;
+					leftRotate(w);
+					w = node.p.left;
+				}
+				
+				w.color = node.p.color;
+				node.p.color = 0;
+				w.left.color = 0;
+				rightRotate(node.p);
+				node = root;
+			}	
+		}
+		
+		node.color = 0;
 	}
 	
+	public void print(Node node) { // node == root[T]
+		// uses in-order traversal
+		Node temp = node;
+		if (temp != null) { // FIXME make this compatible with sentinels. replace null with sentinal in case you forget.
+			print(temp.left);
+			System.out.println("[" + node.key + "-" + node.printColor(node.color) + "]");
+			print(temp.right);
+		} else {
+			System.out.println("NULL");
+			// display parent
+			// if it is left or right child relative to parent
+		}
+	}
 	
 //##################################################
-	public Node leftRotate(Node node) {
+	public void leftRotate(Node node) {
 		// node serves as the root of the subtree we perform the rotation on
 		// MUST ASSUME THAT NODE.RIGHT != NULL
 		
+		/* The pivot is actually the branch between the subtree root
+		 * and one of its children but in this case I define the 
+		 * child to be included in the rotation as a pivot
+		 */
 		Node pivot = node.right;
 		node.right = pivot.left;
 		
@@ -189,10 +248,9 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 		pivot.left = node;
 		node.p = pivot;
 		
-		return pivot;
 	}
 	
-	public Node rightRotate(Node node) {
+	public void rightRotate(Node node) {
 		Node pivot = node.left;
 		node.left = pivot.right;
 		
@@ -212,8 +270,7 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 		
 		pivot.right = node;
 		node.p = pivot;
-		
-		return pivot;
+
 	}
 	
 	public Node min(Node node) {
