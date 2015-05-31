@@ -79,6 +79,7 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 		Node n = fetch(key);
 		
 		if (n != null) {
+			n.getData(); // FIXME temporary for bugfixing
 			return n.value;
 		}
 		
@@ -379,7 +380,9 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 		}
 		return (node.color == 1); // true
 	}
-		
+
+//##################################################	
+	
 	public int height(Node node) {
 		// height of given node needed for prettyPrint()
 		// depth is num of lines from root to node
@@ -400,7 +403,37 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 		// number of leaves needed for prettyPrint()
 		return 0;
 	}
+
+	public void print() {
+		
+		Queue<Node> current = new LinkedList<Node>();
+		Queue<Node> next = new LinkedList<Node>();
+		
+		if (root != nil) {
+			current.add(root);
+			
+			while (!current.isEmpty()) {
+				Node cn = current.poll();
+				
+				if (cn != null) {
+					System.out.print("[" + cn.key + "+" + cn.getColor() + "]  ");
+					next.add(cn.left);
+					next.add(cn.right);
+				} 
+				
+				if (current.isEmpty()) {
+					System.out.println();
+					Queue<Node> temp = new LinkedList<Node>();
+					temp = current;
+					current = next;
+					next = temp;
+				}
+			}
+		}
+	}
 	
+	
+//##################################################	
 	// Returns 0 if it is an invalid RBTree else it returns the height of the entire tree
 	/* Test 1: See if a red node has red children.
 	 * Test 2: Ensures the tree is a valid binary search tree
@@ -482,9 +515,9 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 		
 		public String getColor() {
 			if (color == 1) {
-				return "RED";
+				return "R";
 			} else {
-				return "BLACK";
+				return "B";
 			}
 		}
 		
@@ -509,6 +542,6 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 				String nodeRight = this.right.key.toString();
 				System.out.println(">: " + nodeRight);
 			}
-		}
+		} // end getData()
 	} 	
 }

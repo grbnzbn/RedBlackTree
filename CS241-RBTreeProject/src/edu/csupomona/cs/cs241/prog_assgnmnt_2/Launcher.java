@@ -30,18 +30,24 @@ public class Launcher {
 		//K key = <Integer> Student ID
 		//V value = <String> Student Name
 		
-		rbt.insert(45, "John Doe");
-		rbt.insert(5, "John Doe");
-		rbt.insert(16, "John Doe");
-		rbt.insert(15, "John Doe");
-		rbt.insert(8, "John Doe");
-		System.out.println(rbt.verify(rbt.root));
-		rbt.uglyDisplay();
+		rbt.insert(45, "X");
+		rbt.insert(5,  "X");
+		rbt.insert(16, "X");
+		rbt.insert(15, "X");
+		rbt.insert(8,  "X");
 		
-		System.out.println("----------");
+		rbt.insert(81, "X");
+		rbt.insert(42, "X");
+		rbt.insert(18, "X");
+		rbt.insert(64, "X");
+		rbt.insert(90, "X");
 		
-		rbt.delete(16);
-		System.out.println(rbt.verify(rbt.root));		
-		rbt.uglyDisplay();
+		rbt.insert(68, "X");
+//		rbt.insert(17, "X");
+//		rbt.insert(75, "X");
+//		rbt.insert(7,  "X");
+//		rbt.insert(16, "X");
+		
+		rbt.print();
 	}
 }
