@@ -70,70 +70,7 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 		fixAdd(nn);
 	}
 
-	public V remove(K key) {
-		// see delete();
-		return null;
-	}
-	
-	public V lookup(K key) {
-		Node n = fetch(key);
-		
-		if (n != null) {
-			n.getData(); // FIXME temporary for bugfixing
-			return n.value;
-		}
-		
-		return null;
-	}
-
-	public String display() {
-		
-		return null;
-	}
-	
-//##################################################
-	
-	public void fixAdd(Node node) {
-		
-		while (node.p.color == 1) { // while the parent of our nn is red (which is also red)
-			if (node.p == node.p.p.left) { // if dad is the left child
-				
-				Node uncle = node.p.p.right;
-				
-				if (uncle.color == 1) { // handle double red case
-					node.p.color = 0;
-					uncle.color = 0;
-					node.p.p.color = 1;
-					node = node.p.p;
-				} else if (node == node.p.right) { // if nn is the right child
-					node = node.p;
-					leftRotate(node); // left rotate new node
-					node.p.color = 0;
-					node.p.p.color = 1;
-					rightRotate(node.p.p); // right rotate grandpa
-				}
-			} else { // symmetric case (if dad is right child)
-				
-				Node uncle = node.p.p.left;
-				
-				if (uncle.color == 1) {
-					node.p.color = 0;
-					uncle.color = 0;
-					node.p.p.color = 1;
-					node = node.p.p;
-				} else if (node == node.p.left) {
-					node = node.p;
-					rightRotate(node);
-					node.p.color = 0;
-					node.p.p.color = 1;
-					leftRotate(node.p.p);
-				}
-			}
-		} // end while loop
-		root.color = 0; // just in case the root becomes red in the process
-	}
-	
-	public V delete(K key) { // TODO bugcheck implementation
+	public V delete(K key) {
 		
 		Node result = fetch(key); // node to be removed
 		
@@ -173,6 +110,70 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 		}
 		
 		return result.value;
+	}
+	
+	public V lookup(K key) {
+		Node n = fetch(key);
+		
+		if (n != null) {
+			n.printData(); // FIXME temporary for bugfixing
+			return n.value;
+		}
+		
+		return null;
+	}
+
+	public String display() { // toPrettyPrint()
+		
+		return null;
+	}
+	
+//##################################################
+	
+	public void fixAdd(Node node) {
+		
+		while (node.p.color == 1) { // while the parent of our nn is red (which is also red)
+			if (node.p == node.p.p.left) { // if dad is the left child
+				
+				Node uncle = node.p.p.right;
+				
+
+				if (uncle.color == 1) { // CASE 1
+					node.p.color = 0;
+					uncle.color = 0;
+					node.p.p.color = 1; // has possibility to break invariant 4
+					node = node.p.p;
+				} else { // CASE 2 or 3
+					if (node == node.p.right) { // if nn is the right child
+						node = node.p;
+						leftRotate(node); // left rotate new node
+					} // END CASE 2
+					
+					node.p.color = 0;
+					node.p.p.color = 1;
+					rightRotate(node.p.p); // right rotate grandpa
+				}
+			} else { // symmetric case (if dad is right child)
+				
+				Node uncle = node.p.p.left;
+				
+				if (uncle.color == 1) {
+					node.p.color = 0;
+					uncle.color = 0;
+					node.p.p.color = 1;
+					node = node.p.p;
+				} else {
+					if (node == node.p.left) {
+						node = node.p;
+						rightRotate(node);
+					}
+					node.p.color = 0;
+					node.p.p.color = 1;
+					leftRotate(node.p.p);
+				}
+			}
+		} // end while loop
+		root.color = 0; // just in case the root becomes red in the process
 	}
 	
 	public void fixRem(Node node) { // TODO bugcheck implementation
@@ -247,10 +248,8 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 				n = n.left;
 			} else {
 				n = n.right;
-			}
-			
-		} // end while loop
-		System.out.println("Node node found."); // FIXME remove this later
+			}	
+		} // end while
 		return null;
 	}
 	
@@ -265,7 +264,7 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 			temp = queue.poll();
 			currentlevel--;
 			
-			temp.getData();
+			temp.printData();
 		}
 		
 	}
@@ -373,13 +372,6 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 		predecessor = temp;
 		return predecessor;
 	}
-	
-	public boolean isRed(Node node) {
-		if (node == nil) {
-			return false;
-		}
-		return (node.color == 1); // true
-	}
 
 //##################################################	
 	
@@ -394,9 +386,8 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 		}
 	}
 	
-	public int size(Node root) {
-		// tree size needed for prettyPrint()
-		return 0;
+	public int getSize(Node root) {
+		return size;
 	}
 	
 	public int numLeaves(Node root) {
@@ -404,7 +395,7 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 		return 0;
 	}
 
-	public void print() {
+	public void print() { // FIXME this is temporary
 		
 		Queue<Node> current = new LinkedList<Node>();
 		Queue<Node> next = new LinkedList<Node>();
@@ -449,8 +440,8 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 			Node ln = node.left;
 			Node rn = node.right;
 
-			if (isRed(node)) { // Consecutive red nodes
-				if (isRed(ln) || isRed(rn)) {
+			if (node.isRed()) { // Consecutive red nodes
+				if (ln.isRed() || rn.isRed()) {
 					System.out.println("Red Violation (#4: Children of a red node are black)");
 					return 0;
 				}
@@ -472,7 +463,7 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 			// Only count black links
 			if (lh != 0 && rh != 0) {
 				// Additional Note: Subtract 1 from the number returned because NIL's color is black
-				return isRed(node) ? lh : lh + 1; // FIXME maybe I should remove the +1
+				return node.isRed() ? lh : lh + 1; // FIXME maybe I should remove the +1
 			} else {
 				System.out.println("Invalid");
 				return 0;
@@ -513,6 +504,13 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 			return this.key.compareTo(n.key);
 		}
 		
+		public boolean isRed() {
+			if (this == nil) {
+				return false;
+			}
+			return (this.color == 1); // true
+		}
+		
 		public String getColor() {
 			if (color == 1) {
 				return "R";
@@ -521,7 +519,7 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 			}
 		}
 		
-		public void getData() {
+		public void printData() {
 			String nodeKey = this.key.toString();
 			String nodeValue = this.value.toString();
 			String nodeColor = this.getColor();

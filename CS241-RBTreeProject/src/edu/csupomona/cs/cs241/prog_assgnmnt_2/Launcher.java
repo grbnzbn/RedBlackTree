@@ -43,11 +43,13 @@ public class Launcher {
 		rbt.insert(90, "X");
 		
 		rbt.insert(68, "X");
-//		rbt.insert(17, "X");
-//		rbt.insert(75, "X");
-//		rbt.insert(7,  "X");
-//		rbt.insert(16, "X");
+		rbt.insert(17, "X");
+		rbt.insert(75, "X");
+		rbt.insert(7,  "X");
+		rbt.insert(16, "X");
 		
 		rbt.print();
+//		rbt.lookup(42);
+//		System.out.println(rbt.getSize(rbt.root));
 	}
 }
