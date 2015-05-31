@@ -511,6 +511,20 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 			return (this.color == 1); // true
 		}
 		
+		public boolean isLeaf() {
+			if (this.left != nil || this.right != nil) {
+				return false;
+			}
+			return true;
+		}
+		
+		public boolean isNil() {
+			if (this != nil) {
+				return false;
+			}
+			return true;
+		}
+		
 		public String getColor() {
 			if (color == 1) {
 				return "R";

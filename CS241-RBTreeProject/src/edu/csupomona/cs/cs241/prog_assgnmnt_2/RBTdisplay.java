@@ -14,6 +14,16 @@ public class RBTdisplay {
 		
 	}
 	
-	public void maxHeight() {
+	public void getHeight() {
+		
 	}
+	
+	public void getLeaves() {
+		
+	}
+	
+	public void getCount() {
+		
+	}
+	
 }
