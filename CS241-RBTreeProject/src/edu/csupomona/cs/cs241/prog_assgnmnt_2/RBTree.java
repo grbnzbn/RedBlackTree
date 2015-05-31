@@ -27,9 +27,9 @@ public class RBTree<K extends Comparable <K>, V> implements Tree<K, V> {
 	public Node root; 						// X
 	public Node sentinel = new Node(); 		// Y
 	
-//	public void add(K key, V value) {
-//		TODO replace when finished below
-//	}
+	public void add(K key, V value) {
+		//TODO replace when finished below
+	}
 
 	public V remove(K key) {
 		return null;
@@ -85,12 +85,12 @@ public class RBTree<K extends Comparable <K>, V> implements Tree<K, V> {
 		return node; // (???) FIXME do we really need to return this for recursion?
 	}
 	
-	public void add(K key, V value) {
+	public void addWhat(K key, V value) {
 		root = insert(root, key, value); // CONFUSION STARTS HERE
 		root.color = 0;
 	}
 	
-	public void insertRB(K key, V value) { // Insert according to book		
+	public void insert(K key, V value) { // Insert according to book		
 		
 		if (root == null) {
 			root = new Node(key, value);
@@ -146,6 +146,10 @@ public class RBTree<K extends Comparable <K>, V> implements Tree<K, V> {
 			
 		}
 		
+	}
+	
+	public V delete(K key) {
+		return null;
 	}
 	
 	public void fixRem() {

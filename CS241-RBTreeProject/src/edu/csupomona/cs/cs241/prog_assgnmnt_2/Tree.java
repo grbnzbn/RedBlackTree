@@ -20,7 +20,7 @@ package edu.csupomona.cs.cs241.prog_assgnmnt_2;
 
 public interface Tree<K extends Comparable<K>, V> {
 	
-	public void add(K key, V value);
+	public void insert(K key, V value); // Changed method name from add to insert because I liked it better.
 	
 	public V remove(K key);
 	
