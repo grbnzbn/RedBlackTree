@@ -31,23 +31,23 @@ public class Launcher {
 		//K key = <Integer> Student ID
 		//V value = <String> Student Name
 		
-		rbt.insert(45, "X");
-		rbt.insert(5,  "X");
-		rbt.insert(16, "X");
-		rbt.insert(15, "X");
-		rbt.insert(8,  "X");
+		rbt.add(45, "X");
+		rbt.add(5,  "X");
+		rbt.add(16, "X");
+		rbt.add(15, "X");
+		rbt.add(8,  "X");
 		
-		rbt.insert(81, "X");
-		rbt.insert(42, "X");
-		rbt.insert(18, "X");
-		rbt.insert(64, "X");
-		rbt.insert(90, "X");
+		rbt.add(81, "X");
+		rbt.add(42, "X");
+		rbt.add(18, "X");
+		rbt.add(64, "X");
+		rbt.add(90, "X");
 		
-		rbt.insert(68, "X");
-		rbt.insert(17, "X");
-		rbt.insert(75, "X");
-		rbt.insert(7,  "X");
-		rbt.insert(16, "X");
+		rbt.add(68, "X");
+		rbt.add(17, "X");
+		rbt.add(75, "X");
+		rbt.add(7,  "X");
+		rbt.add(16, "X");
 		
 //		rbt.lookup(42);
 //		System.out.println(rbt.getSize(rbt.root));

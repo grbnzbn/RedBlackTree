@@ -35,7 +35,7 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 		this.root.p = nil;
 	}
 	
-	public void insert(K key, V value) {
+	public void add(K key, V value) {
 		numElem++;
 		Node nn = new Node(key, value);
 		Node cn = root;
@@ -114,16 +114,20 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 		root.color = 0; // just in case the root becomes red in the process
 	}
 
-	public V delete(K key) { // add size--
-		Node remove = fetch(key); // node to be removed
+	public V remove(K key) {
 		
+		Node dead = fetch(key); // node to be removed
 		Node splice = new Node(); 
 		Node spliceChild = new Node();
 		
-		if (remove.left == nil || remove.right == nil) { // Test 1: Find out how many children
-			splice = remove;
+		if (key == dead.key) {
+			numElem--;
+		}
+		
+		if (dead.left == nil || dead.right == nil) { // Test 1: Find out how many children
+			splice = dead;
 		} else {
-			splice = successor(remove);
+			splice = successor(dead);
 		}
 		
 		if (splice.left != nil) { // Test 2: Get child of the spliced node 
@@ -142,9 +146,9 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 			splice.p.right = spliceChild;
 		}
 		
-		if (splice != remove) { // only occurs if the spliced node was the successor
-			remove.key = splice.key;
-			remove.value = splice.value;
+		if (splice != dead) { // only occurs if the spliced node was the successor
+			dead.key = splice.key;
+			dead.value = splice.value;
 			// obtain satellite data from ngv into result
 		}
 		
@@ -152,7 +156,7 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 			fixRem(spliceChild);
 		}
 		
-		return remove.value;
+		return dead.value;
 	}
 	
 	public void fixRem(Node node) { // TODO fixRem
@@ -227,7 +231,7 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 		return null;
 	}
 
-	public String display() { // toPrettyPrint()
+	public String toPrettyPrint() { // toPrettyPrint()
 		return null;
 	}
 	
