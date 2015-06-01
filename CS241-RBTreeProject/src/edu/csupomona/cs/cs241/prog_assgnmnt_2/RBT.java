@@ -18,17 +18,16 @@
 
 package edu.csupomona.cs.cs241.prog_assgnmnt_2;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Deque;
 
 public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
-
-	private Queue<Node> queue = new LinkedList<Node>();
 	
 	private Node nil; // this is the sentinel
-	protected Node root;
-	private int size; // number of elements excluding null leaves
-	private int count; // black-height of tree
+	protected Node root; // change to private later. protected only used for bugfixing
+	private int numElem;
 	
 	public RBT() {
 		this.nil = new Node();
@@ -37,8 +36,7 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 	}
 	
 	public void insert(K key, V value) {
-		
-		size++;
+		numElem++;
 		Node nn = new Node(key, value);
 		Node cn = root;
 		Node pn = nil;
@@ -69,66 +67,6 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 
 		fixAdd(nn);
 	}
-
-	public V delete(K key) {
-		
-		Node result = fetch(key); // node to be removed
-		
-		Node ngv = new Node(); // successor or next greatest value
-		Node temp = new Node(); // FIXME temp
-		
-		if (result.left == nil || result.right == nil) {
-			ngv = result;
-		} else {
-			ngv = successor(result);
-		}
-		
-		if (ngv.left != nil) {
-			temp = ngv.left;
-		} else {
-			temp = ngv.right;
-		}
-		
-		temp.p = ngv.p; // FIXME delete error occurring here
-		
-		if (ngv.p == nil) {
-			root = temp;
-		} else if (ngv == ngv.p.left) {
-			ngv.p.left = temp;
-		} else {
-			ngv.p.right = temp;
-		}
-		
-		if (ngv != result) {
-			result.key = ngv.key;
-			result.value = ngv.value;
-			// TODO obtain satellite data from ngv into result
-		}
-		
-		if (ngv.color == 0) {
-			fixRem(temp);
-		}
-		
-		return result.value;
-	}
-	
-	public V lookup(K key) {
-		Node n = fetch(key);
-		
-		if (n != null) {
-			n.printData(); // FIXME temporary for bugfixing
-			return n.value;
-		}
-		
-		return null;
-	}
-
-	public String display() { // toPrettyPrint()
-		
-		return null;
-	}
-	
-//##################################################
 	
 	public void fixAdd(Node node) {
 		
@@ -175,13 +113,54 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 		} // end while loop
 		root.color = 0; // just in case the root becomes red in the process
 	}
+
+	public V delete(K key) { // add size--
+		Node remove = fetch(key); // node to be removed
+		
+		Node splice = new Node(); 
+		Node spliceChild = new Node();
+		
+		if (remove.left == nil || remove.right == nil) { // Test 1: Find out how many children
+			splice = remove;
+		} else {
+			splice = successor(remove);
+		}
+		
+		if (splice.left != nil) { // Test 2: Get child of the spliced node 
+			spliceChild = splice.left;
+		} else {
+			spliceChild = splice.right;
+		}
+		
+		spliceChild.p = splice.p; 
+		
+		if (splice.p == nil) { // Test 3: 
+			root = spliceChild;
+		} else if (splice == splice.p.left) {
+			splice.p.left = spliceChild;
+		} else {
+			splice.p.right = spliceChild;
+		}
+		
+		if (splice != remove) { // only occurs if the spliced node was the successor
+			remove.key = splice.key;
+			remove.value = splice.value;
+			// obtain satellite data from ngv into result
+		}
+		
+		if (splice.color == 0) {
+			fixRem(spliceChild);
+		}
+		
+		return remove.value;
+	}
 	
-	public void fixRem(Node node) { // TODO bugcheck implementation
+	public void fixRem(Node node) { // TODO fixRem
 		
 		Node sibling;
 		
 		while (node != root && node.color == 0) {
-			if (node == node.p.left) { // if rmvd node is left child
+			if (node == node.p.left) { // if spliced node's child is the left
 				sibling = node.p.right;
 				
 				if (sibling.color == 1) {
@@ -201,7 +180,7 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 					sibling = node.p.right;
 				}
 				
-				sibling.color = node.p.color; //TODO
+				sibling.color = node.p.color;
 				node.p.color = 0;
 				sibling.right.color = 0;
 				leftRotate(node.p);
@@ -237,7 +216,22 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 		node.color = 0;
 	}
 	
-	public Node fetch(K key) {
+	public V lookup(K key) {
+		Node n = fetch(key);
+		
+		if (n != null) {
+			n.printData(); // temporary for bugfixing
+			return n.value;
+		}
+		
+		return null;
+	}
+
+	public String display() { // toPrettyPrint()
+		return null;
+	}
+	
+	public Node fetch(K key) { // lookup helper
 		Node n = root;
 		
 		while (n != null) {
@@ -253,23 +247,6 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 		return null;
 	}
 	
-	public void uglyDisplay() { // TODO uglyDisplay()
-		
-		Node temp = new Node();
-		int currentlevel = 1;
-		int nextlevel = 0;
-		queue.add(root);
-		
-		while (!queue.isEmpty()) {
-			temp = queue.poll();
-			currentlevel--;
-			
-			temp.printData();
-		}
-		
-	}
-	
-//##################################################
 	public void leftRotate(Node node) {
 		// node serves as the root of the subtree we perform the rotation on
 		// MUST ASSUME THAT NODE.RIGHT != NULL
@@ -372,30 +349,77 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 		predecessor = temp;
 		return predecessor;
 	}
-
-//##################################################	
 	
-	public int height(Node node) {
-		// height of given node needed for prettyPrint()
-		// depth is num of lines from root to node
-		// height is the max depth of any node in the tree
-		if (node == null) {
-			return -1;
-		} else {
-			return (1 + Math.max(height(node.left), height (node.right)));
+	// TODO PrettyPrint
+	public void print(Node node, int level, int indentSpace) {
+		
+		Deque<Node> dq = new LinkedList<Node>();
+		
+		int h = getHeight(root);
+		int levelNumNodes = 1;
+		
+		int branchLen =  2*((int)Math.pow(2.0,h)-1) - (3-level)*(int)Math.pow(2.0,h-1);
+		int nodeSpaceLen = 2 + (level+1)*(int)Math.pow(2.0,h);
+		int startLen = branchLen + (3-level) + indentSpace;
+		
+		dq.addLast(root);
+		
+		for (int r = 1; r < h; r++) {
+			branchLen = branchLen/2 - 1;
+			nodeSpaceLen = nodeSpaceLen/2 +1;
+			startLen = branchLen + (3-level) + indentSpace;
+			printNode(branchLen, nodeSpaceLen, startLen, levelNumNodes, dq);
+			
+			for (int i = 0; i < levelNumNodes; i++) {
+				Node cn = dq.poll();
+				
+				if(cn != nil) {
+					dq.addLast(cn.left);
+					dq.addLast(cn.right);
+				} else {
+					dq.addLast(nil); // FIXME
+					dq.addLast(nil);
+				}
+			}
+			levelNumNodes *= 2;
+		}
+		printLeaves(indentSpace, level, levelNumNodes, dq);
+	}
+	
+	// TODO
+	public void printNode(int branchLen, int nodeSpaceLen, int startLen, int levelNumNodes, Deque<Node> dq) {
+		Iterator iter = dq.iterator();
+		for (int i = 0; i < levelNumNodes/2; i++) {
+			
+		}
+		System.out.println();
+	}
+	
+	// TODO
+	public void printLeaves(int indentSpace, int level, int levelNumNodes, Deque<Node> dq) {
+		
+		for (int i = 0; i < levelNumNodes; i++) {
+			
 		}
 	}
 	
-	public int getSize(Node root) {
-		return size;
+	public void space(int count) {
+		for (int i = 0; i < count; i++) {
+			System.out.println(" ");
+		}
 	}
 	
-	public int numLeaves(Node root) {
-		// number of leaves needed for prettyPrint()
-		return 0;
+	public int getHeight(Node node) {
+		if (node == null) {
+			return 0;
+		} else {
+			int lh = getHeight(node.left);
+			int rh = getHeight(node.right);
+			return (lh > rh) ? lh + 1 : rh + 1;
+		}
 	}
 
-	public void print() { // FIXME this is temporary
+	public void print() { // FIXME temporary print for bugfixing
 		
 		Queue<Node> current = new LinkedList<Node>();
 		Queue<Node> next = new LinkedList<Node>();
@@ -423,10 +447,9 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 		}
 	}
 	
-	
-//##################################################	
-	// Returns 0 if it is an invalid RBTree else it returns the height of the entire tree
-	/* Test 1: See if a red node has red children.
+	/* Verification of RBT
+	 * Returns 0 if it is an invalid RBTree else it returns the height of the entire tree
+	 * Test 1: See if a red node has red children.
 	 * Test 2: Ensures the tree is a valid binary search tree
 	 * Test 3: Counts the black nodes along a path and ensures equal length
 	 */
@@ -463,16 +486,13 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 			// Only count black links
 			if (lh != 0 && rh != 0) {
 				// Additional Note: Subtract 1 from the number returned because NIL's color is black
-				return node.isRed() ? lh : lh + 1; // FIXME maybe I should remove the +1
+				return node.isRed() ? lh : lh + 1; // maybe I should remove the +1
 			} else {
 				System.out.println("Invalid");
 				return 0;
 			}
 		}
 	}
-	
-	
-//##################################################	
 	
 	public class Node implements Comparable<Node> {
 		
@@ -481,7 +501,7 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 		protected Node p;
 		protected Node left;
 		protected Node right;
-		protected int color; // RED or BLK
+		protected int color; // BLACK = 0, RED = 1
 		
 		public Node() {
 			this.key = null;
@@ -496,7 +516,7 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 			this.key = key;
 			this.value = value;
 			this.color = 1;
-			this.left = nil; // FIXME bug check
+			this.left = nil;
 			this.right = nil;
 		}
 		
@@ -509,6 +529,13 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 				return false;
 			}
 			return (this.color == 1); // true
+		}
+		
+		public boolean isInternal() {
+			if (this == this.p.p.left.left || this == this.p.p.right.right) {
+				return false;
+			}
+			return true;
 		}
 		
 		public boolean isLeaf() {
@@ -535,6 +562,7 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 		
 		public void printData() {
 			String nodeKey = this.key.toString();
+			@SuppressWarnings("unused")
 			String nodeValue = this.value.toString();
 			String nodeColor = this.getColor();
 			

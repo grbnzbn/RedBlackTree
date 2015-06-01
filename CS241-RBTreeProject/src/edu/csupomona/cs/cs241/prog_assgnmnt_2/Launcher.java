@@ -26,6 +26,7 @@ public class Launcher {
 	
 	public static void main(String[] args) {
 		RBT<Integer, String> rbt = new RBT<Integer, String>();
+		
 //		Launcher registry = new Launcher();
 		//K key = <Integer> Student ID
 		//V value = <String> Student Name
@@ -48,8 +49,11 @@ public class Launcher {
 		rbt.insert(7,  "X");
 		rbt.insert(16, "X");
 		
-		rbt.print();
 //		rbt.lookup(42);
 //		System.out.println(rbt.getSize(rbt.root));
+		
+		rbt.print();
+		BTreePrinter.printNode(rbt.root);	
+		System.out.println(rbt.getHeight(rbt.root));
 	}
 }
