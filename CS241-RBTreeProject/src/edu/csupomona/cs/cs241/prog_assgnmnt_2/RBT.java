@@ -70,44 +70,47 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 	
 	public void fixAdd(Node node) {
 		
-		while (node.p.color == 1) { // while the parent of our nn is red (which is also red)
-			if (node.p == node.p.p.left) { // if dad is the left child
+		Node grandpa = node.p.p;
+		Node dad = node.p;
+		
+		while (dad.color == 1) { // while the parent of our nn is red (which is also red)
+			if (dad == grandpa.left) { // if dad is the left child
 				
-				Node uncle = node.p.p.right;
+				Node uncle = grandpa.right;
 				
 
-				if (uncle.color == 1) { // CASE 1
-					node.p.color = 0;
+				if (uncle.color == 1) {
+					dad.color = 0;
 					uncle.color = 0;
-					node.p.p.color = 1; // has possibility to break invariant 4
-					node = node.p.p;
-				} else { // CASE 2 or 3
-					if (node == node.p.right) { // if nn is the right child
-						node = node.p;
+					grandpa.color = 1; // has possibility to break invariant 4
+					node = grandpa;
+				} else {
+					if (node == dad.right) { // if nn is the right child
+						node = dad;
 						leftRotate(node); // left rotate new node
-					} // END CASE 2
+					}
 					
-					node.p.color = 0;
-					node.p.p.color = 1;
-					rightRotate(node.p.p); // right rotate grandpa
+					dad.color = 0;
+					grandpa.color = 1;
+					rightRotate(grandpa); // right rotate grandpa
 				}
 			} else { // symmetric case (if dad is right child)
 				
-				Node uncle = node.p.p.left;
+				Node uncle = grandpa.left;
 				
 				if (uncle.color == 1) {
-					node.p.color = 0;
+					dad.color = 0;
 					uncle.color = 0;
-					node.p.p.color = 1;
-					node = node.p.p;
+					grandpa.color = 1;
+					node = grandpa;
 				} else {
-					if (node == node.p.left) {
-						node = node.p;
+					if (node == dad.left) {
+						node = dad;
 						rightRotate(node);
 					}
-					node.p.color = 0;
-					node.p.p.color = 1;
-					leftRotate(node.p.p);
+					dad.color = 0;
+					grandpa.color = 1;
+					leftRotate(grandpa);
 				}
 			}
 		} // end while loop
@@ -151,7 +154,7 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 			dead.value = splice.value;
 		}
 		
-		if (splice.color == 0) {
+		if (splice.color == 0) { // Problems arise only when the splice child is black
 			fixRem(spliceChild);
 		}
 		
@@ -230,6 +233,7 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 		return null;
 	}
 
+	// TODO
 	public String toPrettyPrint() { // toPrettyPrint()
 		return null;
 	}
@@ -362,7 +366,7 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 		Deque<Node> dq = new LinkedList<Node>();
 		
 		int h = getHeight(root);
-		int levelNumNodes = 1;
+		int numNodes = 1;
 		
 		int branchLen =  2*((int)Math.pow(2.0,h)-1) - (3-level)*(int)Math.pow(2.0,h-1);
 		int nodeSpaceLen = 2 + (level+1)*(int)Math.pow(2.0,h);
@@ -374,9 +378,9 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 			branchLen = branchLen/2 - 1;
 			nodeSpaceLen = nodeSpaceLen/2 +1;
 			startLen = branchLen + (3-level) + indentSpace;
-			printNode(branchLen, nodeSpaceLen, startLen, levelNumNodes, dq);
+			printNode(branchLen, nodeSpaceLen, startLen, numNodes, dq);
 			
-			for (int i = 0; i < levelNumNodes; i++) {
+			for (int i = 0; i < numNodes; i++) {
 				Node cn = dq.poll();
 				
 				if(cn != nil) {
@@ -387,24 +391,24 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 					dq.addLast(nil);
 				}
 			}
-			levelNumNodes *= 2;
+			numNodes *= 2;
 		}
-		printLeaves(indentSpace, level, levelNumNodes, dq);
+		printLeaves(indentSpace, level, numNodes, dq);
 	}
 	
 	// TODO
-	public void printNode(int branchLen, int nodeSpaceLen, int startLen, int levelNumNodes, Deque<Node> dq) {
+	public void printNode(int branchLen, int nodeSpaceLen, int startLen, int numNodes, Deque<Node> dq) {
 		Iterator iter = dq.iterator();
-		for (int i = 0; i < levelNumNodes/2; i++) {
+		for (int i = 0; i < numNodes/2; i++) {
 			
 		}
 		System.out.println();
 	}
 	
 	// TODO
-	public void printLeaves(int indentSpace, int level, int levelNumNodes, Deque<Node> dq) {
+	public void printLeaves(int indentSpace, int level, int numNodes, Deque<Node> dq) {
 		
-		for (int i = 0; i < levelNumNodes; i++) {
+		for (int i = 0; i < numNodes; i++) {
 			
 		}
 	}

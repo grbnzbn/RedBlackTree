@@ -18,18 +18,11 @@
 
 package edu.csupomona.cs.cs241.prog_assgnmnt_2;
 
-import java.util.Scanner;
-
-public class Launcher {
-
-	Scanner sc = new Scanner(System.in);
+public class Debugger {
 	
 	public static void main(String[] args) {
 		RBT<Integer, String> rbt = new RBT<Integer, String>();
-		
-		//K key = <Integer> Student ID
-		//V value = <String> Student Name
-		
+
 		rbt.add(45, "X");
 		rbt.add(5,  "X");
 		rbt.add(16, "X");
@@ -51,6 +44,5 @@ public class Launcher {
 		rbt.print();
 		System.out.println(rbt.verify(rbt.root));
 		System.out.println(rbt.getHeight(rbt.root));
-		RBTDebugger.printNode(rbt.root);	
 	}
 }
