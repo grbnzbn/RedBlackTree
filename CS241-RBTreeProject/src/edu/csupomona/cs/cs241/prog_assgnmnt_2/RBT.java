@@ -149,7 +149,6 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 		if (splice != dead) { // only occurs if the spliced node was the successor
 			dead.key = splice.key;
 			dead.value = splice.value;
-			// obtain satellite data from ngv into result
 		}
 		
 		if (splice.color == 0) {
@@ -160,7 +159,7 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 	}
 	
 	public void fixRem(Node node) { // TODO fixRem
-		
+		// Node: node == spliceChild
 		Node sibling;
 		
 		while (node != root && node.color == 0) {
@@ -235,6 +234,34 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 		return null;
 	}
 	
+	public void print() {
+		
+		Queue<Node> current = new LinkedList<Node>();
+		Queue<Node> next = new LinkedList<Node>();
+		
+		if (root != nil) {
+			current.add(root);
+			
+			while (!current.isEmpty()) {
+				Node cn = current.poll();
+				
+				if (cn != null) {
+					System.out.print("[" + cn.key + "+" + cn.getColor() + "]  ");
+					next.add(cn.left);
+					next.add(cn.right);
+				} 
+				
+				if (current.isEmpty()) {
+					System.out.println();
+					Queue<Node> temp = new LinkedList<Node>();
+					temp = current;
+					current = next;
+					next = temp;
+				}
+			}
+		}
+	}
+	
 	public Node fetch(K key) { // lookup helper
 		Node n = root;
 		
@@ -304,21 +331,14 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 
 	}
 	
-	public Node min(Node node) {
+	public Node min(Node node) { // symmetric case = max
 		while (node.left != nil) {
 			node = node.left;
 		}
 		return node;
 	}
 	
-	public Node max(Node node) {
-		while (node.right != nil) {
-			node = node.right;
-		}
-		return node;
-	}
-	
-	public Node successor(Node node) {
+	public Node successor(Node node) { // symmetric case = predecessor
 		Node successor = null;
 		
 		if (node.right  != nil) { // if there is a right subtree of node
@@ -334,24 +354,6 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 		}
 		successor = temp;
 		return successor;
-	}
-	
-	public Node predecessor(Node node) {
-		Node predecessor = null;
-		
-		if (node.left != nil) {
-			predecessor = max(node.left);
-			return predecessor;
-		}
-		
-		Node temp = node.p;
-		
-		while (temp != nil && node == temp.left) {
-			node = temp;
-			temp = temp.p;
-		}
-		predecessor = temp;
-		return predecessor;
 	}
 	
 	// TODO PrettyPrint
@@ -420,34 +422,6 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 			int lh = getHeight(node.left);
 			int rh = getHeight(node.right);
 			return (lh > rh) ? lh + 1 : rh + 1;
-		}
-	}
-
-	public void print() { // FIXME temporary print for bugfixing
-		
-		Queue<Node> current = new LinkedList<Node>();
-		Queue<Node> next = new LinkedList<Node>();
-		
-		if (root != nil) {
-			current.add(root);
-			
-			while (!current.isEmpty()) {
-				Node cn = current.poll();
-				
-				if (cn != null) {
-					System.out.print("[" + cn.key + "+" + cn.getColor() + "]  ");
-					next.add(cn.left);
-					next.add(cn.right);
-				} 
-				
-				if (current.isEmpty()) {
-					System.out.println();
-					Queue<Node> temp = new LinkedList<Node>();
-					temp = current;
-					current = next;
-					next = temp;
-				}
-			}
 		}
 	}
 	
