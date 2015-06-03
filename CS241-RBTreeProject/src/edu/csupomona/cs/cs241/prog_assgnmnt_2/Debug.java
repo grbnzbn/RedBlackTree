@@ -12,7 +12,7 @@ import edu.csupomona.cs.cs241.prog_assgnmnt_2.RBT.Node;
  
 class Debug{
  
-    public static <K extends Comparable<K>,V> void printNode(Node root) {
+    public <K extends Comparable<K>,V> void printNode(Node root) {
         int maxLevel = Debug.maxLevel(root);
  
         printNodeInternal(Collections.singletonList(root), 1, maxLevel);

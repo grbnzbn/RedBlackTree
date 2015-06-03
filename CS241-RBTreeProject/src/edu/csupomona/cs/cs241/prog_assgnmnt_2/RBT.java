@@ -64,48 +64,44 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 		fixAdd(nn);
 	}
 
-	public V remove(K key) {  // TODO RENAME VARIABLES
+	public V remove(K key) { 
 		
-		Node z = fetch(key); // node to be removed
-		Node y = new Node(); 
-		Node x = new Node();
+		Node removed = fetch(key); // node to be removed
+		Node sucessor = new Node(); // node's successor
+		Node transplant = new Node(); // node that takes removed nodes place
 		
-//		if (key == node.key) {
-//			numElem--;
-//		}
-		
-		if (z.left == nil || z.right == nil) { // Test 1: Find out how many children
-			y = z;
+		if (removed.left == nil || removed.right == nil) { // Test 1: Find out how many children
+			sucessor = removed;
 		} else {
-			y = successor(z);
+			sucessor = successor(removed);
 		}
 		
-		if (y.left != nil) { // Test 2: Get child of the spliced node 
-			x = y.left;
+		if (sucessor.left != nil) { // Test 2: Get child of the spliced node 
+			transplant = sucessor.left;
 		} else {
-			x = y.right;
+			transplant = sucessor.right;
 		}
 		
-		x.p = y.p; 
+		transplant.p = sucessor.p; 
 		
-		if (y.p == nil) { // Test 3: 
-			root = x;
-		} else if (y == y.p.left) {
-			y.p.left = x;
+		if (sucessor.p == nil) { 
+			root = transplant;
+		} else if (sucessor == sucessor.p.left) {
+			sucessor.p.left = transplant;
 		} else {
-			y.p.right = x;
+			sucessor.p.right = transplant;
 		}
 		
-		if (y != z) { // only occurs if the spliced node was the successor
-			z.key = y.key;
-			z.value = y.value;
+		if (sucessor != removed) { // only occurs if the spliced node was the successor
+			removed.key = sucessor.key;
+			removed.value = sucessor.value;
 		}
 		
-		if (y.color == 0) { // Problems arise only when the splice child is black
-			fixRem(x); // FIXME remove this
+		if (sucessor.color == 0) { // Problems arise only when the splice child is black	
+			fixRem(transplant); 
 		}
 		
-		return z.value;
+		return removed.value;
 	}
 	
 	public V lookup(K key) {
@@ -185,22 +181,22 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 				
 				Node uncle = node.p.p.right;
 				
-				if (uncle.color == 1) { // CASE 1
+				if (uncle.color == 1) {
 					node.p.color = 0;
 					uncle.color = 0;
 					node.p.p.color = 1; // has possibility to break invariant 4
 					node = node.p.p;
-				} else { // CASE 2 or 3
+				} else {
 					if (node == node.p.right) { // if nn is the right child
 						node = node.p;
 						leftRotate(node); // left rotate new node
-					} // END CASE 2
+					}
 					
 					node.p.color = 0;
 					node.p.p.color = 1;
 					rightRotate(node.p.p); // right rotate grandpa
 				}
-			} else { // symmetric case (if dad is right child)
+			} else {
 				
 				Node uncle = node.p.p.left;
 				
@@ -223,7 +219,7 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 		root.color = 0; // just in case the root becomes red in the process
 	}
 	
-	public void fixRem(Node node) { // FIXME this is MY implementation
+	public void fixRem(Node node) {
 		
 		/* Case 1: Sibling is red
 		 * Case 2: Sibling is black & its children are black
@@ -283,13 +279,13 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 				sibling = node.p.right;
 			}
 		} else {
-				if (sibling.left.color == 0) {
-					sibling.right.color = 0;
-					sibling.color = 1;
-					leftRotate(sibling);
-					sibling = node.p.left;
-				}
+			if (sibling.left.color == 0) {
+				sibling.right.color = 0;
+				sibling.color = 1;
+				leftRotate(sibling);
+				sibling = node.p.left;
 			}
+		}
 		return sibling;
 	}
 	
@@ -308,8 +304,6 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 		node = root;
 		return node;
 	}
-	
-//###################################################################################################################	
 	
 	public void leftRotate(Node node) {
 		// node serves as the root of the subtree we perform the rotation on
@@ -387,6 +381,17 @@ public class RBT<K extends Comparable<K>, V> implements Tree<K, V>{
 		}
 		successor = temp;
 		return successor;
+	}
+	
+	public void transplant(Node node, Node transplant) {
+		if (node.p == nil) {
+			root = transplant;
+		} else if (node == node.p.left) {
+			node.p.left = transplant;
+		} else {
+			node.p.right = transplant;
+		}
+		transplant.p = node.p;
 	}
 	
 	public int getHeight(Node node) {
