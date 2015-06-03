@@ -70,8 +70,7 @@ public class Main {
 		System.out.println("Verification: " + rbt.verify(rbt.root));
 		rbt.remove(64);
 		System.out.println("Verification: " + rbt.verify(rbt.root));
-		rbt.remove(45);
-		System.out.println("Verification: " + rbt.verify(rbt.root));
+
 
 		rbt.print();
 		
