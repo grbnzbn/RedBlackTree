@@ -18,27 +18,11 @@
 
 package edu.csupomona.cs.cs241.prog_assgnmnt_2;
 
-import java.util.Random;
-
 public class Main {
 	
 	public static void main(String[] args) {
 		RBT<Integer, String> rbt = new RBT<Integer, String>();
 		Debug debug = new Debug();
-		
-//        Random rand = new Random();
-//        rand.setSeed(System.currentTimeMillis());
-//        //int  n = rand.nextInt(50) + 1;
-//        Integer [] nArr = new Integer [800000];
-//        for(int i = 0; i<50; i++){
-//            Integer k = rand.nextInt(99999 + 1);
-//            nArr[i] = k;
-//            rbt.add(k, "x");
-//            //System.out.println("nArr[" + i + "] = " + k);
-//        }
-//        for(int i = 0; i<40; i++){
-//            rbt.remove(nArr[i]);
-//        }
 		
 		rbt.add(45, "X");
 		rbt.add(5,  "X");
