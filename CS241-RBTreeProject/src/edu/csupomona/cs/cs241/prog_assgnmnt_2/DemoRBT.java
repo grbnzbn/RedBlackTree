@@ -18,6 +18,12 @@
 
 package edu.csupomona.cs.cs241.prog_assgnmnt_2;
 
+import java.util.Deque;
+import java.util.Iterator;
+import java.util.LinkedList;
+
+import edu.csupomona.cs.cs241.prog_assgnmnt_2.RBT.Node;
+
 /*
  * DISCLAIMER: THIS CLASS WAS USED FOR A ISOLATED TESTING
  * OF VARIOUS METHOD IMPLEMENTATIONS
@@ -28,7 +34,7 @@ package edu.csupomona.cs.cs241.prog_assgnmnt_2;
 public class DemoRBT<K extends Comparable <K>, V> implements Tree<K, V> {
 
 	public Node root; 						// X
-	public Node sentinel = new Node(); 		// Y
+	public Node nil = new Node(); 		// Y
 	
 	public void add(K key, V value) {
 		//TODO replace when finished below
@@ -99,11 +105,11 @@ public class DemoRBT<K extends Comparable <K>, V> implements Tree<K, V> {
 			root = new Node(key, value);
 		} else {
 			
-			Node pn = sentinel; // previous node
+			Node pn = nil; // previous node
 			Node nn = root; // next node
 			Node node = new Node(key, value);
 			
-			while (nn != sentinel) {
+			while (nn != nil) {
 				pn = nn;
 				if (node.key.compareTo(nn.key) < 0) {
 					nn = nn.left;
@@ -112,10 +118,10 @@ public class DemoRBT<K extends Comparable <K>, V> implements Tree<K, V> {
 				}				
 			}
 			
-			node.parent = pn;
+			node.p = pn;
 			
 			// check the following operations
-			if (pn == sentinel) {
+			if (pn == nil) {
 				root = node;
 			} else if (node.key.compareTo(pn.key) < 0) {
 				pn.left = node;
@@ -123,8 +129,8 @@ public class DemoRBT<K extends Comparable <K>, V> implements Tree<K, V> {
 				pn.right = node;
 			}
 			
-			node.left = sentinel;
-			node.right = sentinel;
+			node.left = nil;
+			node.right = nil;
 			node.color = 1;
 			/* RB INSERT FIXUP OCCURS HERE */ // TODO
 		}
@@ -169,22 +175,22 @@ public class DemoRBT<K extends Comparable <K>, V> implements Tree<K, V> {
 //		node.color = 1; // FIXME 
 //		pivot.color = 0; // FIXME
 		
-		if (pivot.left != sentinel) {
-			pivot.left.parent = node;
+		if (pivot.left != nil) {
+			pivot.left.p = node;
 		}
 		
-		pivot.parent = node.parent;
+		pivot.p = node.p;
 		
-		if (node.parent == sentinel) {
+		if (node.p == nil) {
 			root = pivot;
-		} else if (node == node.parent.left) {
-			node.parent.left = pivot;
+		} else if (node == node.p.left) {
+			node.p.left = pivot;
 		} else {
-			node.parent.right = pivot;
+			node.p.right = pivot;
 		}
 		
 		pivot.left = node;
-		node.parent = pivot;
+		node.p = pivot;
 		
 		return pivot;
 	}
@@ -193,22 +199,22 @@ public class DemoRBT<K extends Comparable <K>, V> implements Tree<K, V> {
 		Node pivot = node.left;
 		node.left = pivot.right;
 		
-		if (pivot.right != sentinel) {
-			pivot.right.parent = node;
+		if (pivot.right != nil) {
+			pivot.right.p = node;
 		}
 		
-		pivot.parent  = node.parent;
+		pivot.p  = node.p;
 		
-		if (node.parent == sentinel) {
+		if (node.p == nil) {
 			root = pivot;
-		} else if (node == node.parent.right) {
-			node.parent.right = pivot;
+		} else if (node == node.p.right) {
+			node.p.right = pivot;
 		} else {
-			node.parent.left = pivot;
+			node.p.left = pivot;
 		}
 		
 		pivot.right = node;
-		node.parent = pivot;
+		node.p = pivot;
 		
 		return pivot;
 	}
@@ -282,6 +288,185 @@ public class DemoRBT<K extends Comparable <K>, V> implements Tree<K, V> {
 		return false;
 	}
 	
+// REALLY BAD STUFF
+	public void tempfixRem(Node node) { // FIXME
+		// Node: node == spliceChild
+		Node sibling;
+		
+		while (node != root && node.color == 0) {
+			if (node == node.p.left) { // if spliced node's child is the left
+				sibling = node.p.right;
+				
+				if (sibling.color == 1) {
+					sibling.color = 0;
+					node.p.color = 1;
+					leftRotate(node.p);
+					sibling = node.p.right;
+				}
+				
+				if (sibling.left.color == 0 && sibling.right.color == 0) {
+					sibling.color = 1;
+					node = node.p;
+				} else if (sibling.right.color == 0) {
+					sibling.left.color = 0;
+					sibling.color = 1;
+					rightRotate(sibling);
+					sibling = node.p.right;
+				}
+				
+				sibling.color = node.p.color;
+				node.p.color = 0;
+				sibling.right.color = 0;
+				leftRotate(node.p);
+	
+				node = root;
+			} else { // symmetric case 
+				sibling = node.p.left;
+				
+				if (sibling.color == 1) {
+					sibling.color = 0;
+					node.p.color = 1;
+					rightRotate(node.p);
+					sibling = node.p.left;
+				}
+				
+				if (sibling.right.color == 0 && sibling.left.color == 0) {
+					sibling.color = 1;
+					node = node.p;
+				} else if (sibling.left.color == 0) {
+					sibling.right.color = 0;
+					sibling.color = 1;
+					leftRotate(sibling);
+					sibling = node.p.left;
+				}
+				
+				sibling.color = node.p.color;
+				node.p.color = 0;
+				sibling.left.color = 0;
+				rightRotate(node.p);
+				
+				node = root;
+			}	
+		}
+		
+		node.color = 0;
+	}
+	
+	
+	public V newremove(K key) { // FIXME
+//		Node z = fetch(key); // node to delete
+		Node z = new Node();
+		Node y = new Node(); // successor node
+		Node x = new Node(); // node that moves into y's original position
+		Node temp = new Node(); // hold y's original color
+		
+		y = z;
+		temp = y;
+		
+		if (z.left == nil) {
+			x = z.right;
+			transplant(z, z.right);
+		} else if (z.right == nil) {
+			x = z.left;
+			transplant(z, z.left);
+		} else {
+//			y = min(z.right);
+			temp.color = y.color;
+			x = y.right;
+			
+			if (y.p == z) {
+				x.p = y;
+			} else {
+				transplant(y, y.right);
+				y.right = z.right;
+				y.right.p = y;
+			}
+			
+			transplant(z, y);
+			y.left = z.left;
+			y.left.p = y;
+			y.color = z.color;			
+		}
+		
+		if (temp.color == 0) {
+			tempfixRem(x);
+		}
+		
+		return z.value;
+	}	
+	
+	public void transplant(Node node, Node transplant) {
+		if (node.p == nil) {
+			root = transplant;
+		} else if (node == node.p.left) {
+			node.p.left = transplant;
+		} else {
+			node.p.right = transplant;
+		}
+		transplant.p = node.p;
+	}
+	
+	public void fixRem(Node node) { // TODO fixRem this was the one from the first time
+		// Node: node == spliceChild
+		Node sibling;
+		
+		while (node != root && node.color == 0) {
+			if (node == node.p.left) { // if spliced node's child is the left
+				sibling = node.p.right;
+				
+				if (sibling.color == 1) {
+					sibling.color = 0;
+					node.p.color = 1;
+					leftRotate(node.p);
+					sibling = node.p.right;
+				}
+				
+				if (sibling.left.color == 0 && sibling.right.color == 0) {
+					sibling.color = 1;
+					node = node.p;
+				} else if (sibling.right.color == 0) {
+					sibling.left.color = 0;
+					sibling.color = 1;
+					rightRotate(sibling);
+					sibling = node.p.right;
+				}
+				
+				sibling.color = node.p.color;
+				node.p.color = 0;
+				sibling.right.color = 0;
+				leftRotate(node.p);
+				node = root;
+			} else { // symmetric case 
+				sibling = node.p.left;
+				
+				if (sibling.color == 1) {
+					sibling.color = 0;
+					node.p.color = 1;
+					rightRotate(node.p);
+					sibling = node.p.left;
+				}
+				
+				if (sibling.right.color == 0 && sibling.left.color == 0) {
+					sibling.color = 1;
+					node = node.p;
+				} else if (sibling.left.color == 0) {
+					sibling.right.color = 0;
+					sibling.color = 1;
+					leftRotate(sibling);
+					sibling = node.p.left;
+				}
+				
+				sibling.color = node.p.color;
+				node.p.color = 0;
+				sibling.left.color = 0;
+				rightRotate(node.p);
+				node = root;
+			}	
+		}
+		
+		node.color = 0;
+	}
+	
 /* ********************
  * POSSIBLE METHODS:
  * getUncle();
@@ -296,13 +481,82 @@ public class DemoRBT<K extends Comparable <K>, V> implements Tree<K, V> {
  * assert();
  * ********************
  */
+
+	public int getHeight(Node node) {
+		if (node == null) {
+			return 0;
+		} else {
+			int lh = getHeight(node.left);
+			int rh = getHeight(node.right);
+			return (lh > rh) ? lh + 1 : rh + 1;
+		}
+	}
+	
+	// TODO PrettyPrint
+	public void print(Node node, int level, int indentSpace) {
+		
+		Deque<Node> dq = new LinkedList<Node>();
+		
+		int h = getHeight(root);
+		int numNodes = 1;
+		
+		int branchLen =  2*((int)Math.pow(2.0,h)-1) - (3-level)*(int)Math.pow(2.0,h-1);
+		int nodeSpaceLen = 2 + (level+1)*(int)Math.pow(2.0,h);
+		int startLen = branchLen + (3-level) + indentSpace;
+		
+		dq.addLast(root);
+		
+		for (int r = 1; r < h; r++) {
+			branchLen = branchLen/2 - 1;
+			nodeSpaceLen = nodeSpaceLen/2 +1;
+			startLen = branchLen + (3-level) + indentSpace;
+			printNode(branchLen, nodeSpaceLen, startLen, numNodes, dq);
+			
+			for (int i = 0; i < numNodes; i++) {
+				Node cn = dq.poll();
+				
+				if(cn != null) {
+					dq.addLast(cn.left);
+					dq.addLast(cn.right);
+				} else {
+					dq.addLast(null); // FIXME
+					dq.addLast(null);
+				}
+			}
+			numNodes *= 2;
+		}
+		printLeaves(indentSpace, level, numNodes, dq);
+	}
+	
+	// TODO
+	public void printNode(int branchLen, int nodeSpaceLen, int startLen, int numNodes, Deque<Node> dq) {
+		Iterator iter = dq.iterator();
+		for (int i = 0; i < numNodes/2; i++) {
+			
+		}
+		System.out.println();
+	}
+	
+	// TODO
+	public void printLeaves(int indentSpace, int level, int numNodes, Deque<Node> dq) {
+		
+		for (int i = 0; i < numNodes; i++) {
+			
+		}
+	}
+	
+	public void space(int count) {
+		for (int i = 0; i < count; i++) {
+			System.out.println(" ");
+		}
+	}
 	
 //##################################################
 	public class Node implements Comparable<Node> {
 
 		protected K key;
 		protected V value;
-		protected Node parent;
+		protected Node p;
 		protected Node left;
 		protected Node right;
 		protected boolean dir; // DIRECTION: false = left && true = right (relative to the parent)
@@ -312,7 +566,7 @@ public class DemoRBT<K extends Comparable <K>, V> implements Tree<K, V> {
 		public Node() { // usually reserved for sentinel
 			this.key = null;
 			this.value = null;
-			this.parent = null;
+			this.p = null;
 			this.left = null;
 			this.right = null;
 			this.color = 0; // 0 = BLACK
@@ -350,10 +604,5 @@ public class DemoRBT<K extends Comparable <K>, V> implements Tree<K, V> {
 		}
 	}
 
-	@Override
-	public String toPrettyPrint() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 }

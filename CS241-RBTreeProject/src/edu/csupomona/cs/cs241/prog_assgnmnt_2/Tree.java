@@ -26,5 +26,5 @@ public interface Tree<K extends Comparable<K>, V> {
 	
 	public V lookup(K key);
 	
-	public String toPrettyPrint();
+	public String display();
 }
